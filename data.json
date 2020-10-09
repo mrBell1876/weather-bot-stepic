@@ -1,10 +1,6 @@
 {
-    "states": {
-        "114712231": "weather_date_handler"
-    },
+    "states": {},
     "main": {},
-    "city": {
-        "114712231": "Москва"
-    },
+    "city": {},
     "weather_date_handler": {}
 }
