@@ -1,6 +1,10 @@
 {
-    "states": {},
+    "states": {
+        "114712231": "weather_date_handler"
+    },
     "main": {},
-    "city": {},
+    "city": {
+        "114712231": "Рыбинск"
+    },
     "weather_date_handler": {}
 }

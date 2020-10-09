@@ -5,6 +5,8 @@ import time
 from dateutil.parser import *
 from re import *
 import json
+import os
+import redis
 
 from telebot import types
 
@@ -28,26 +30,46 @@ BTNS = [item for item in DAYS.values()]
 BTNS.append('Сменить город')
 markup = types.ReplyKeyboardMarkup(row_width=3, resize_keyboard=True, one_time_keyboard=True)  # создаем клавиатуру
 markup.add(*BTNS)
-try:
-    data = json.load(open('data.json', 'r', encoding='utf-8'))
-except FileNotFoundError:
-    data = {
-        "states": {},
-        "main": {},
-        "city": {},
-        "weather_date_handler": {}
-    }
-
+redis_url = os.environ.get('REDIS_URL')
+if redis_url is None:
+    try:
+        data = json.load(open('data.json', 'r', encoding='utf-8'))
+    except FileNotFoundError:
+        data = {
+            "states": {},
+            "main": {},
+            "city": {},
+            "weather_date_handler": {}
+        }
+else:
+    redis_db = redis.from_url(redis_url)
+    raw_data = redis_db.get('data')
+    if raw_data is None:
+        data = {
+            "states": {},
+            "main": {},
+            "city": {},
+            "weather_date_handler": {}
+        }
+    else:
+        data = json.loads(raw_data)
 
 # функция обновления даты
+
+
 def change_data(key, user_id, value):
     data[key][user_id] = value
-    json.dump(
-        data,
-        open('data.json', 'w', encoding='utf-8'),
-        indent=4,
-        ensure_ascii=False)
+    if redis_url is None:
+        json.dump(
+            data,
+            open('data.json', 'w', encoding='utf-8'),
+            indent=4,
+            ensure_ascii=False)
+    else:
+        redis_db = redis.from_url(redis_url)
+        redis_db.set('data', json.dumps(data))
 
+        pass
 
 def weather(city, day=0):
     errors_api = 0
