@@ -9,8 +9,9 @@ import os
 import redis
 
 from telebot import types
+token = str(os.environ['TOKEN_TELEBOT'])
 
-bot = telebot.TeleBot('1389053246:AAGte_l6RHFz2ecLbWtQQTYszMO91VVo2T8')
+bot = telebot.TeleBot(token)
 
 api_url = 'https://stepik.akentev.com/api/weather'
 
